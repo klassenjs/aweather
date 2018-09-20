@@ -156,7 +156,7 @@ gpointer _site_update_thread(gpointer _site)
 	gchar *dir_list = g_strconcat(nexrad_url, "/", site->city->code,
 			"/", "dir.list", NULL);
 	GList *files = grits_http_available(site->http,
-			"^\\w{4}_\\d{8}_\\d{4}$", site->city->code,
+			"\\w{4}_\\d{8}_\\d{6}.bz2$", site->city->code,
 			"\\d+ (.*)", (offline ? NULL : dir_list));
 	g_free(dir_list);
 	gchar *nearest = _find_nearest(site->time, files, 5);
