@@ -281,15 +281,18 @@ void _site_on_location_changed(GritsViewer *viewer,
 
 	/* Calculate distance, could cache xyz values */
 	gdouble eye_xyz[3], site_xyz[3];
-	lle2xyz(lat, lon, elev, &eye_xyz[0], &eye_xyz[1], &eye_xyz[2]);
+	lle2xyz(lat, lon, site->city->pos.elev,
+			&eye_xyz[0], &eye_xyz[1], &eye_xyz[2]);
 	lle2xyz(site->city->pos.lat, site->city->pos.lon, site->city->pos.elev,
 			&site_xyz[0], &site_xyz[1], &site_xyz[2]);
+
 	gdouble dist = distd(site_xyz, eye_xyz);
+	int show_site = (dist <= min_dist) && (elev <= EARTH_R / 12);
 
 	/* Load or unload the site if necessasairy */
-	if (dist <= min_dist && dist < elev*1.25 && site->status == STATUS_UNLOADED)
+	if (show_site && site->status == STATUS_UNLOADED)
 		radar_site_load(site);
-	else if (dist > 2*min_dist &&  site->status != STATUS_UNLOADED)
+	else if (!show_site && site->status != STATUS_UNLOADED)
 		radar_site_unload(site);
 }
 
